@@ -1,0 +1,12 @@
+ec2_keypair: "resourcehost"
+ec2_security_group: "sg-aa3ec8c2"
+ec2_instance_type: "t2.micro"
+ec2_image: "ami-f0ba5f9f"
+ec2_subnet_id: "subnet-f67b2f8d"
+ec2_region: "eu-central-1"
+ec2_zone: "eu-central-1b"
+ec2_tag_Name: "DemoRH-ansible"
+ec2_tag_Type: "demo"
+ec2_tag_Environment: "demo"
+ec2_volume_size_sda: 10
+ec2_volume_size_sdb: 60
