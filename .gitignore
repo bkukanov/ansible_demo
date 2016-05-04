@@ -25,4 +25,4 @@ Temporary Items
 .apdisk
 
 # Ansible
-.retry
+*.retry
