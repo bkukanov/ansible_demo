@@ -1,0 +1,4 @@
+ec2_keypair: "p1aws.ap-northeast-1"
+ec2_image: "ami-a21529cc"
+ec2_region: "ap-northeast-1"
+ec2_zone: "ap-northeast-1a"
