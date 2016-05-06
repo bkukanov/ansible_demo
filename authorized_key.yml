@@ -5,8 +5,9 @@
   tasks:
     - set_fact: ansible_ssh_private_key_file="~/.ssh/{{ hostvars[item].ec2_region }}.pem"
       with_items: "{{ inventory_hostname }}"
-    # - debug: msg="ssh-keyscan -t rsa {{ inventory_hostname }} >> ~/.ssh/known_hosts"
-    - name: accept new ssh fingerprints
-      shell: ssh-keyscan -t rsa {{ inventory_hostname }} >> ~/.ssh/known_hosts
-    # - name: add current local user ssh key
-    #   authorized_key: user=ubuntu key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    # - name: Clean known_hosts
+    #   local_action: shell ssh-keygen -f "~/.ssh/known_hosts" -R {{ inventory_hostname }}
+    - name: Update known_hosts
+      local_action: shell ssh-keyscan -t rsa {{ inventory_hostname }} >> $HOME/.ssh/known_hosts 2>&1
+    - name: add current local user ssh key
+      authorized_key: user=ubuntu key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
