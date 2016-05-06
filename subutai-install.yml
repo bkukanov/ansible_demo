@@ -1,0 +1,8 @@
+---
+- hosts: tag_Type_demo
+  gather_facts: false
+  become: yes
+  become_method: sudo
+  user: ubuntu
+  roles:
+    - install-subutai
