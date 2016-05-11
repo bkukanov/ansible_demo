@@ -1,4 +1,4 @@
-ec2_keypair: "p1aws.ap-northeast-1"
+ec2_keypair: "demo.ap-northeast-1"
 ec2_image: "ami-4ca0a322"
 ec2_region: "ap-northeast-1"
-ec2_zone: "ap-northeast-1a"
+ec2_zone: "ap-northeast-1c"

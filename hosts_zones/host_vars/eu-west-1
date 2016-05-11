@@ -1,4 +1,4 @@
-ec2_keypair: "p1aws.eu-west-1"
+ec2_keypair: "demo.eu-west-1"
 ec2_image: "ami-aa318dd9"
 ec2_region: "eu-west-1"
 ec2_zone: "eu-west-1c"
