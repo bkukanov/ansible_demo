@@ -15,8 +15,8 @@
     get_url: url=https://eu0.cdn.subut.ai:8338/kurjun/rest/file/get?name=subutai_4.0.0_amd64{{ snap_suffix }}.snap dest=/tmp/subutai.snap validate_certs=no force=yes
   - name: Installing snap
     shell: snappy install --allow-unauthenticated /tmp/subutai.snap
-  - name: changing branch
-    shell: sed -i 's/branch =/branch = dev/' /apps/subutai/current/etc/agent.gcfg
+  # - name: changing branch to dev
+  #   shell: sed -i 's/branch =/branch = dev/' /apps/subutai/current/etc/agent.gcfg
   - name: Destoy Management Template  
     shell: subutai destroy management
     ignore_errors: yes
