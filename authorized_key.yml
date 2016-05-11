@@ -13,4 +13,4 @@
     become: no
     local_action: shell ssh-keyscan -t rsa {{ inventory_hostname }} >> $HOME/.ssh/known_hosts 2>&1
   - name: add current local user ssh key
-    authorized_key: user=ubuntu key="{{ lookup('file', '~/.ssh/askat.pub') }}"
+    authorized_key: user=ubuntu key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
