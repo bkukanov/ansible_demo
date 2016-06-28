@@ -3,8 +3,8 @@
   gather_facts: false
   user: ubuntu
   tasks:
-    # - set_fact: ansible_ssh_private_key_file="~/.ssh/{{ hostvars[item].ec2_region }}.pem"
-    #   with_items: "{{ inventory_hostname }}"
+  - set_fact: ansible_ssh_private_key_file="~/.ssh/demo.{{ hostvars[item].ec2_region }}.pem"
+    with_items: "{{ inventory_hostname }}"
   - name: Clean known_hosts
     become: no
     local_action: shell ssh-keygen -f "$HOME/.ssh/known_hosts" -R {{ inventory_hostname }}
@@ -13,4 +13,4 @@
     become: no
     local_action: shell ssh-keyscan -t rsa {{ inventory_hostname }} >> $HOME/.ssh/known_hosts 2>&1
   - name: add current local user ssh key
-    authorized_key: user=ubuntu key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    authorized_key: user=ubuntu key="{{ lookup('file', '~/.ssh/askat.pub') }}"

@@ -1,7 +1,7 @@
 ---
   #Preparing connection
-  - set_fact: ansible_ssh_private_key_file="~/.ssh/demo.{{ hostvars[item].ec2_region }}.pem"
-    with_items: "{{ inventory_hostname }}"
+  # - set_fact: ansible_ssh_private_key_file="~/.ssh/demo.{{ hostvars[item].ec2_region }}.pem"
+  #   with_items: "{{ inventory_hostname }}"
   - name: Clean known_hosts
     become: no
     local_action: shell ssh-keygen -f "$HOME/.ssh/known_hosts" -R {{ inventory_hostname }}
@@ -10,13 +10,19 @@
     become: no
     local_action: shell ssh-keyscan -t rsa {{ inventory_hostname }} >> $HOME/.ssh/known_hosts 2>&1
 
-  # Installing subutai
+  #Installing subutai
   - name: Downloading snap from Kurjun
-    get_url: url=https://eu0.cdn.subut.ai:8338/kurjun/rest/file/get?name=subutai_4.0.0_amd64{{ snap_suffix }}.snap dest=/tmp/subutai.snap validate_certs=no force=yes
+    get_url: url=https://cdn.subut.ai:8338/kurjun/rest/file/get?name=subutai_4.0.0_amd64-dev.snap dest=/tmp/subutai.snap validate_certs=no force=yes
+  # - name: Updating RH
+  #   shell: subutai update rh
+  #   ignore_errors: yes
+  # - name: Updating MH
+  #   shell: subutai update management
+
   - name: Installing snap
     shell: snappy install --allow-unauthenticated /tmp/subutai.snap
-  # - name: changing branch to dev
-  #   shell: sed -i 's/branch =/branch = dev/' /apps/subutai/current/etc/agent.gcfg
+  - name: changing branch to dev
+    shell: sed -i 's/branch =/branch = dev/' /apps/subutai/current/etc/agent.gcfg
   - name: Destoy Management Template  
     shell: subutai destroy management
     ignore_errors: yes

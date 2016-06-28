@@ -1,2 +1,2 @@
-snap_suffix: "-dev"
+snap_suffix: ""
 second_drive: "/dev/sdc"
