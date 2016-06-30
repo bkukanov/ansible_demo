@@ -1,6 +1,0 @@
-ec2_instance_type: "t2.medium"
-ec2_tag_Name: "DemoRH"
-ec2_tag_Type: "demo"
-ec2_tag_Environment: "demo"
-ec2_volume_size_sda: 10
-ec2_volume_size_sdb: 60

@@ -1,7 +1,0 @@
----
- - hosts: zones
-   connection: local
-   gather_facts: false
-   user: root
-   roles:
-    - launch-demo-instances
