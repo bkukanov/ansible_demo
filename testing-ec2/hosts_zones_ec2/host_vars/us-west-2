@@ -1,0 +1,4 @@
+ec2_keypair: "demo.us-west-2"
+ec2_image: "ami-dda14cbd"
+ec2_region: "us-west-2"
+ec2_zone: "us-west-2c"

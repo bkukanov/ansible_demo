@@ -1,0 +1,8 @@
+---
+- hosts: "tag_State_test_snappy"
+  gather_facts: false
+  become: yes
+  become_method: sudo
+  user: ubuntu
+  roles:
+    - install-subutai-ec2

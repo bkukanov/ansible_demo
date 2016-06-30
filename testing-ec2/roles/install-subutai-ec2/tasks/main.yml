@@ -1,0 +1,60 @@
+---
+  #Preparing connection
+  - set_fact: ansible_ssh_private_key_file="~/.ssh/p1.demo.{{ hostvars[item].ec2_region }}.pem"
+    with_items: "{{ inventory_hostname }}"
+  - name: Cleaning known_hosts
+    become: no
+    local_action: shell ssh-keygen -f "$HOME/.ssh/known_hosts" -R {{ inventory_hostname }}
+    ignore_errors: yes
+  - name: Updating known_hosts
+    become: no
+    local_action: shell ssh-keyscan -t rsa {{ inventory_hostname }} >> $HOME/.ssh/known_hosts 2>&1
+  - set_fact:
+      region: "{{ hostvars[item].ec2_region }}"
+    with_items: "{{ inventory_hostname }}"
+  - name: Searching ec2
+    ec2_remote_facts:
+      filters:
+        ip-address: "{{ inventory_hostname }}"
+      region: "{{ region }}"
+    register: ec2_snappy
+    delegate_to: localhost
+    become: no
+
+  #Installing subutai
+  - name: Downloading snap from Kurjun
+    get_url: url=https://cdn.subut.ai:8338/kurjun/rest/file/get?name=subutai_4.0.0_amd64{{ snap_suffix }}.snap dest=/tmp/subutai.snap validate_certs=no force=yes
+  - name: Installing snap
+    shell: snappy install --allow-unauthenticated /tmp/subutai.snap
+  - name: Creating /mnt mount
+    shell: btrfsinit {{second_drive}}
+  - name: Importing Management Template
+    shell: subutai import management
+
+  # Register on Hub
+  # - name: Wait SS Web Console Launch
+  #   uri:
+  #     url: "https://{{ inventory_hostname }}:8443/rest/v1/peer/inited"
+  #     validate_certs: no
+  #   register: result_url
+  #   until: result_url.status == 200
+  #   retries: 600
+  #   delay: 1  
+  # - name: Register Peer on Hub
+  #   local_action: shell bash bin/register_hub.sh {{ inventory_hostname }}
+  #   become: no
+
+  - name: Changing State tag
+    ec2_tag:
+      region: "{{ region }}"
+      resource: "{{item}}"
+      state: present
+      tags:
+        State: test-subutai
+    with_items:
+      - "{{ ec2_snappy.instances|selectattr('tags.State', 'equalto', 'test-snappy')|map(attribute='id')|list }}"
+    delegate_to: localhost
+    become: no
+  #clean
+  # - name: Remove Downloaded snap
+  #   file: path=/tmp/subutai.snap state=absent

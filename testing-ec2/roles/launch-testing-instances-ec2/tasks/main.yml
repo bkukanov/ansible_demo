@@ -1,0 +1,100 @@
+---
+ - name: Create VPC
+   local_action:
+     module: ec2_vpc
+     region: "{{ ec2_region }}"
+     state: present
+     cidr_block: 172.77.0.0/24
+     subnets:
+      - cidr: 172.77.0.0/24
+        az: "{{ ec2_zone }}"
+        resource_tags: { "Name":"testing" }
+     route_tables:
+        - subnets:
+          - 172.77.0.0/24
+          routes:
+            - dest: 0.0.0.0/0
+              gw: igw
+     internet_gateway: True
+     resource_tags: { "Name":"testing" }
+     wait: yes
+   register: vpc
+
+ - name: Create the security group for the VPC
+   local_action:
+     module: ec2_group
+     name: "testing-sg-vpc"
+     description: "Security Group for Testing hosts"
+     vpc_id: "{{ vpc.vpc_id }}"
+     region: "{{ ec2_region }}"
+     rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 2222
+        to_port: 2222
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 8080
+        to_port: 8080
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 443
+        to_port: 443
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 8443
+        to_port: 8443
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 8444
+        to_port: 8444
+        cidr_ip: 0.0.0.0/0
+     rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+   register: testing_sgroup
+ 
+ - name: Provision EC2 Box
+   local_action:
+     module: ec2
+     key_name: "{{ ec2_keypair }}"
+     group_id: "{{ testing_sgroup.group_id }}"
+     instance_type: "{{ ec2_instance_type }}"
+     image: "{{ ec2_image }}"
+     region: "{{ ec2_region }}"
+     zone: "{{ ec2_zone }}"
+     vpc_subnet_id: "{{ vpc.subnets[0].id }}"
+     instance_tags: '{"Name":"{{ec2_tag_Name}}","Type":"{{ec2_tag_Type}}","State":"{{ec2_tag_State}}"}'
+     assign_public_ip: yes
+     wait: true
+     count: 1
+     volumes: 
+     - device_name: /dev/sda1
+       device_type: gp2
+       volume_size: "{{ ec2_volume_size_sda }}"
+       delete_on_termination: true
+     - device_name: /dev/sdb
+       device_type: gp2
+       volume_size: "{{ ec2_volume_size_sdb }}"
+       delete_on_termination: true
+   register: ec2
+
+ - add_host: name={{ item.public_ip }} >
+             groups=tag_Type_{{ec2_tag_Type}},tag_State_{{ec2_tag_State}}
+             ec2_region={{ec2_region}} 
+             ec2_tag_Name={{ec2_tag_Name}}
+             ec2_tag_Type={{ec2_tag_Type}}
+             ec2_tag_State={{ec2_tag_State}}
+             ec2_ip_address={{item.public_ip}}
+   with_items: "{{ec2.instances}}"
+
+ - name: Wait for the instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=1800 state=started
+   with_items: "{{ec2.instances}}"

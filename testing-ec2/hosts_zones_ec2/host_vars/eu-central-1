@@ -1,0 +1,4 @@
+ec2_keypair: "demo.eu-central-1"
+ec2_image: "ami-f0ba5f9f"
+ec2_region: "eu-central-1"
+ec2_zone: "eu-central-1b"

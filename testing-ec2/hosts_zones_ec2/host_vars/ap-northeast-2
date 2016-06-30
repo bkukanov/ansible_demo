@@ -1,0 +1,4 @@
+ec2_keypair: "demo.ap-northeast-2"
+ec2_image: "ami-4527e92b"
+ec2_region: "ap-northeast-2"
+ec2_zone: "ap-northeast-2c"
