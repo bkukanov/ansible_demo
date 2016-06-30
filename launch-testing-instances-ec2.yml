@@ -1,0 +1,7 @@
+---
+ - hosts: zones
+   connection: local
+   gather_facts: false
+   user: root
+   roles:
+    - launch-testing-instances-ec2

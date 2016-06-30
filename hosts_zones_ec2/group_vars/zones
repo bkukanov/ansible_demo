@@ -1,0 +1,6 @@
+ec2_instance_type: "t2.medium"
+ec2_tag_Name: "TestingRH"
+ec2_tag_Type: "testing"
+ec2_tag_State: "test-snappy"
+ec2_volume_size_sda: 10
+ec2_volume_size_sdb: 60
